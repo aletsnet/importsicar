@@ -48,6 +48,25 @@ class ListasController extends Controller
     public function store(Request $request)
     {
         //
+        //$item = $request->data;
+        //dump($item);
+        
+        if($request->A != '' || $request->A != NULL){
+            $row = new Listas;
+            $row->color = $request->A;
+            $row->lote= $request->B;
+            $row->paquete= $request->C;
+            $row->kilos= $request->D;
+            $row->costo= $request->E;
+            $row->presio= $request->F;
+            $row->numero= $request->G;
+            $row->repetido= $request->H;
+            $row->space = $request->space;
+            $row->status = 1002;
+            $row->save();
+        }
+        return "OK";
+
     }
 
     /**
@@ -72,6 +91,7 @@ class ListasController extends Controller
     public function update(Request $request, $id)
     {
         //
+        
     }
 
     /**

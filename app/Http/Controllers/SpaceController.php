@@ -13,6 +13,10 @@ class SpaceController extends Controller
     public function index()
     {
         //
+        $spaces = Space::select("id as valor","proceso as label")
+        ->orderby('id','desc')
+        ->Get();
+        return $spaces;
     }
 
     /**
@@ -29,6 +33,19 @@ class SpaceController extends Controller
     public function store(Request $request)
     {
         //
+        $spaces = Space::Where('status','1003')->get();
+        foreach($spaces as $item){
+            $item->status = 1002;
+            $item->save();
+        }
+        //if(!$space instanceof Space){
+            $space = new Space;
+            $space->proceso = 'Proceso ' . date('d/m/Y H:i:s');
+            $space->status = 1003;
+            $space->save();
+        //}
+
+        return $space;
     }
 
     /**

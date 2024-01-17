@@ -7,22 +7,28 @@
             <div class="card border ">
                 <div class="card-body">
                     <form id="search_form" action="javascript:void(0);">
-                        <div class="row ">
+                        <div class="row m-1">
+                            <div class="col-12" id="msj_general">
+                                <div class="alert alert-warning d-flex align-items-center" role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                                    <div class="alert_mensaje"> </div>
+                                </div>
+                            </div>
                             <div class="col-auto">
                                 <label class="form-label">Sesion Activa:</label>
                             </div>
                             <div class="col-auto">
-                                <select class="form-select" aria-label="lasesion" id="space" name="space">
+                                <select class="form-select" aria-label="lasesion" id="space" name="space" onchange="search_table()">
                                     @foreach ($spaces as $item)
                                         <option {{ $item->status == '1003' ? 'selected' : '' }} value="{{$item->id}}">{{$item->proceso}}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="col-auto">
-                                <button type="button" class="btn btn-primary" id="new_space" name="new_space">Nuevo sesion</button>
+                                <button type="button" class="btn btn-primary" id="newspace" name="newspace" onclick="new_space()">Nuevo sesion</button>
                             </div>
                         </div>
-                        <div class="row">
+                        <div class="row m-1">
                             <div class="col-12">
                                 <div class="input-group ">
                                     <button type="button" class="btn btn-success " data-bs-toggle="modal" data-bs-target="#modalForm" onclick = "nuevo();">
@@ -74,8 +80,6 @@
                                         <a class="page-link" href="#" tabindex="-1">Previous</a>
                                     </li>
                                     <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
                                     <li class="page-item">
                                         <a class="page-link" href="#">Next</a>
                                     </li>
@@ -97,46 +101,50 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="row" id="botup" style="display:none;">
+                <div class="card">
+                    <div class="card_body">
+                        <div class="row p-1">
+                            <div class="col-3">
+                                <label class="">Subir archivo</label>
+                            </div>
+                            <div class="col-9">
+                                <input type="file" class="form-control" id="upfilexls" placeholder="Imagen a subir" onchange="fileup_xls()" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                            </div>
+                        </div>
+                        <div class="row p-1" id="botup" style="display:none;">
+                            <div class="col-12">
+                                <button type="button" class="btn btn-primary" id="btnproceso" onclick="save_file()">Procesar</button>
+                                <label id="proceso"></label>
+                            </div>
+                        </div>
+                        <div class="col-12" id="msj_upfile">
+                            <div class="alert alert-warning d-flex align-items-center" role="alert">
+                                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Warning:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                                <div class="alert_mensaje"> </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" id="table-xls">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Elemetos</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        Sin datos que mostrar
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     
-                    <button type="button" class="btn btn-primary" onclick="save_file()">Guardar</button>
                 </div>
-                <div class="row">
-                    <div class="col-3">
-                        <label class="">Subir archivo</label>
-                    </div>
-                    <div class="col-9">
-                        <input type="file" class="form-control" id="upfilexls" placeholder="Imagen a subir" onchange="fileup_xls()" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                    </div>
-                </div>
-                <div class="col-12 label_error" style="display: none;">
-                    <div class="alert alert-danger alert-dismissible alert-label-icon rounded-label fade show" role="alert">
-                        <i class="ri-error-warning-line label-icon"></i><strong>Error</strong> - Se ha producido un error al subir
-                        <span>
-                            <strong class="error_message"> Error</strong>
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-body" id="table-xls">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Elemetos</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                Sin datos que mostrar
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                
             </div>
         </div>
     </div>
@@ -156,9 +164,17 @@
         }
     }
 
+    const alert_mensaje = (div, msj, activo) => {
+        const contendor = document.getElementById(div);
+        const mensaje = contendor.getElementsByClassName('alert_mensaje')[0];
+        contendor.style = activo ? "display: normal;" : "display: none";
+        mensaje.innerHTML = msj;
+    }
+
     const search_table = (page) => {
         const buscar = document.getElementById("search");
         let ruta = url_pro  + 'lista/' + sesion.value + "/s" + (buscar.value != "" ? "/"+buscar.value : "/@") ;
+        alert_mensaje("msj_general","Espere mientras esta cargando", true);
         axios.get(ruta , {})
             .then(
                 function (result) {
@@ -208,20 +224,34 @@
                         }
                     }
                     load_data("showSearch",cols,datos);
-                    
+                    alert_mensaje("msj_general","Ok", false);
                 }
             )
             .catch(function (error) {
                 console.log(error);
-                document.documentElement.setAttribute("data-preloader", "disable");
+                alert_mensaje("msj_general","Error", true);
             });
+    }
+
+    const new_space = () => {
+        if(confirm("¿Está seguro de iniciar un nuevo espacio de trabajo?")){
+            let ruta = "{{ route('space.store')}}";
+            param = { };
+            axios.post(ruta, param, { headers: { 'Content-Type': 'multipart/form-data'} },)
+            .then((result) => {
+                load_select('', "space", "{{ route("space.index")}}", (space.options[space.selectedIndex].value * 1  + 1), 'search_table()');
+            })
+            .catch(function (error) {
+                alert_mensaje("alert_general","Error: " + error,true);
+                console.log(error);
+            });
+
+        }
     }
 
     const fileup_xls = () => {
         const subir_div = document.getElementById('upFileModal');
-        const label_error = subir_div.getElementsByClassName("label_error")[0];
         const botup = document.getElementById('botup');
-
         botup.style="display:none;";
 
         let formData = new FormData();
@@ -229,12 +259,12 @@
         
         formData.append('file', file.files[0]);
         let ruta = url_pro  + 'lista/' + sesion.value + "/xls";
+        alert_mensaje("msj_upfile","Procesando archivo",true);
         axios.post(ruta,
             formData, 
             { headers: { 'Content-Type': 'multipart/form-data'} },)
             .then(
                 function (result) {
-                    label_error.style="display: none;";
                     botup.style="display: normal;";
                     const data = result.data.data;
                     const cols = {
@@ -254,38 +284,39 @@
                             datos.push(value);
                     }
                     data_files = datos;
-
-
                     load_data('table-xls', cols, datos);
-
+                    alert_mensaje("msj_upfile","OK",false);
                     file.value = "";
                 }
             )
             .catch(function (error) {
+                alert_mensaje("msj_upfile","Error: " + error, true);
                 //label_error.style="display: normal;";
                 //const err = error.response.data.errors;
                 console.log(error);
             });
     }
 
-    const save_file = () => {
-        let ruta = url_pro  + 'lista/' + sesion.value + "/savefile" ;
+    const save_file = async () => {
+        const proceso = document.getElementById("proceso");
+        const btnproceso = document.getElementById("btnproceso");
+        const total = data_files.length;
+
+        btnproceso.disabled = true;
+        proceso.innerHTML = "0/" + total;
+
+        let ruta = "{{ route('lista.store')}}";
+        
+
         for(const [key, value] of Object.entries(data_files)){
-            console.log(value);
+            let param = value;
+            param["space"] = space.value;
+            await axios.post(ruta,param);
+            proceso.innerHTML = key + "/" + total;
         }
-        /*
-        param = { data : data_files};
-        axios.post(ruta,param).then(
-                function (result) {
-                    console.log(result);
-                    location.href = url_pro;
-                }
-            )
-            .catch(function (error) {
-                //label_error.style="display: normal;";
-                //const err = error.response.data.errors;
-                console.log(error);
-            });*/
+
+        location.href = url_pro;
+        
     }
 
     const delete_item = (id) => {
@@ -312,7 +343,7 @@
         a.click();
     }
 
-    setTimeout(function(){ search_table(); }, 1000);
+    setTimeout(function(){ search_table(); alert_mensaje("msj_upfile","ok",false)}, 1000);
 
     
 </script>

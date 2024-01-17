@@ -31,6 +31,7 @@ Route::group(['middleware' => 'auth'], function()
     Route::get('/lista/{space}/printer/', [App\Http\Controllers\ListasController::class, 'printerall'])->name('lista.printerall');
     Route::get('/lista/{space}/printer/{id}', [App\Http\Controllers\ListasController::class, 'printer'])->name('lista.printer');
     Route::resource('/lista', 'App\Http\Controllers\ListasController');
+    Route::resource('/space', 'App\Http\Controllers\SpaceController');
     Route::get('/coded/{code}', [App\Http\Controllers\GeneralController::class, 'code2d'])->name('general.code2d');
     Route::match(['put', 'post'],'/lista/{space}/xls/', [App\Http\Controllers\GeneralController::class, 'fileup'])->name('lista.fileup');
 });

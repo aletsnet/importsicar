@@ -33,7 +33,7 @@ class HomeController extends Controller
             $space->save();
         }
 
-        $spaces = Space::Get();
+        $spaces = Space::orderby('id','desc')->Get();
         $param = [
             'spaces' => $spaces
         ];
